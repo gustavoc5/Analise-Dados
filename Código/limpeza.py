@@ -8,6 +8,9 @@ ideb = pd.read_csv('../Dados/IDEB/ideb_2013_2023_formatado.csv', encoding='latin
 censo.columns = censo.columns.str.strip().str.upper()
 ideb.columns = ideb.columns.str.strip().str.upper()
 
+# Renomear SG_UF do Censo para evitar conflito no merge
+censo.rename(columns={'SG_UF': 'UF_CENSO'}, inplace=True)
+
 # Converter ID da escola para string sem decimal
 ideb['ID_ESCOLA'] = ideb['ID_ESCOLA'].astype(str).str.split('.').str[0]
 censo['CO_ENTIDADE'] = censo['CO_ENTIDADE'].astype(str)
@@ -42,13 +45,14 @@ map_loc = {1: 'Urbana', 2: 'Rural'}
 dados['DEPENDENCIA'] = dados['TP_DEPENDENCIA'].map(map_dep)
 dados['LOCALIZACAO'] = dados['TP_LOCALIZACAO'].map(map_loc)
 
-# Selecionar colunas finais
+# Selecionar colunas finais (com UF do Censo renomeada)
 colunas_finais = [
-    'CO_ENTIDADE', 'ANO', 'ETAPA', 'IDEB',
+    'CO_ENTIDADE', 'ANO', 'UF_CENSO', 'ETAPA', 'IDEB',
     'DEPENDENCIA', 'LOCALIZACAO',
     'IN_BIBLIOTECA', 'IN_LABORATORIO_INFORMATICA',
     'IN_INTERNET', 'IN_ENERGIA_REDE_PUBLICA'
 ]
+
 dados_final = dados[colunas_finais]
 
 # Exportar o resultado
